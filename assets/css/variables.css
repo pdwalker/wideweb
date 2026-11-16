@@ -1,0 +1,31 @@
+/* WideWeb: the layout always spans 100% of the viewport.
+
+   Unlike upstream Hextra, no site or page parameter can cap page or content
+   width. Sidebars are fixed-width columns; whatever space they do not use is
+   given to the main content area. See:
+     - front matter: `sidebar.hide`, `sidebar.show`, `toc`
+     - site config:  `params.sidebar.enable`, `params.toc.enable`
+*/
+
+:root {
+  --hextra-max-page-width: 100%;
+  --hextra-max-content-width: none;
+  --hextra-max-navbar-width: 100%;
+  --hextra-max-footer-width: 100%;
+}
+
+.hextra-max-page-width {
+  max-width: var(--hextra-max-page-width);
+}
+
+.hextra-max-content-width {
+  max-width: var(--hextra-max-content-width);
+}
+
+.hextra-max-navbar-width {
+  max-width: var(--hextra-max-navbar-width);
+}
+
+.hextra-max-footer-width {
+  max-width: var(--hextra-max-footer-width);
+}

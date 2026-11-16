@@ -1,0 +1,19 @@
+name = "WideWeb"
+license = "MIT"
+licenselink = "https://github.com/pdwalker/wideweb/blob/main/LICENSE"
+description = "Full-viewport-width fork of Hextra: the main content always uses 100% of the window; left and right sidebars are optional and collapse completely when unused."
+homepage = "https://github.com/pdwalker/wideweb/"
+demosite = "https://imfing.github.io/hextra/"
+tags = ["Modern", "Documentation", "Responsive", "Full Width", "Dark", "Hextra"]
+features = ["Full Width", "Responsive", "Dark Mode", "Search", "Syntax Highlighting", "Multilingual", "Blog", "RSS"]
+min_version = "0.146.0"
+
+[author]
+  name = "pdwalker"
+
+# WideWeb is a fork of Hextra (MIT), preserving its upstream design and features.
+[original]
+  author = "Xin Fang"
+  name = "Hextra"
+  homepage = "https://github.com/imfing/hextra/"
+  repo = "https://github.com/imfing/hextra"

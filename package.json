@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "dev": "hugo server -D --source=exampleSite --port 1313",
+    "build": "hugo --gc --minify --source=exampleSite",
+    "build:css": "npx postcss --config postcss.config.mjs --env production assets/css/styles.css -o assets/css/compiled/main.css"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
+    "postcss-cli": "^11.0.1",
+    "prettier": "^3.8.3",
+    "prettier-plugin-go-template": "^0.0.15",
+    "tailwindcss": "^4.3.0"
+  }
+}

@@ -1,0 +1,26 @@
+<div class="not-prose" style="margin:1.5rem 0;padding:0.75rem 1rem;border:1px solid rgba(128,128,128,.35);border-radius:8px;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace">
+  <div style="font-weight:600;margin-bottom:4px">Layout probe <span style="font-weight:400;opacity:.7">(live — resize the window)</span></div>
+  <div id="ww-probe">measuring…</div>
+</div>
+<script>
+(function () {
+  function shown(sel) {
+    var el = document.querySelector(sel);
+    return !!el && getComputedStyle(el).display !== 'none';
+  }
+  function update() {
+    var main = document.getElementById('content');
+    if (!main) return;
+    var vw = window.innerWidth;
+    var mw = main.getBoundingClientRect().width;
+    var left = vw >= 768 && shown('aside.hextra-sidebar-container');
+    var right = vw >= 1280 && shown('nav.hextra-toc');
+    document.getElementById('ww-probe').textContent =
+      'viewport ' + vw + 'px  |  main ' + Math.round(mw) + 'px (' + Math.round((mw / vw) * 100) + '% of window)' +
+      '  |  left sidebar: ' + (left ? 'shown' : 'collapsed → space given to main') +
+      '  |  right sidebar: ' + (right ? 'shown' : 'collapsed → space given to main');
+  }
+  window.addEventListener('resize', update);
+  update();
+})();
+</script>

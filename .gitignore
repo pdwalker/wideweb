@@ -5,3 +5,4 @@ resources/
 hugo_stats.json
 .lavish/
 .DS_Store
+session*.json

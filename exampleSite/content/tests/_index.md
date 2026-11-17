@@ -20,3 +20,5 @@ hamburger overlay on pages that use it.
 4. Drag the window narrower and wider and watch the main width reflow — it
    should always equal *window − (visible sidebars × 16rem)*, and never be
    capped by a fixed max-width.
+
+{{< layout-probe >}}

@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  HUGO_VERSION: "0.165.0"
+
+jobs:
+  css-sync:
+    name: Compiled CSS is in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:css
+      - name: Check assets/css/compiled/main.css for drift
+        run: |
+          if ! git diff --quiet -- assets/css/compiled/main.css; then
+            echo "::error::assets/css/compiled/main.css is stale — run 'npm install && npm run build:css' and commit the result."
+            git diff --stat -- assets/css/compiled/main.css
+            exit 1
+          fi
+
+  site:
+    name: Build + layout probes (exampleSite)
+    runs-on: ubuntu-latest
+    env:
+      CHROME_EXTRA_FLAGS: "--no-sandbox --disable-dev-shm-usage"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Install Hugo (extended)
+        run: |
+          curl -fsSL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz" | tar xz hugo
+          sudo mv hugo /usr/local/bin/
+          hugo version
+      - name: Build exampleSite (must be free of ERROR/WARN)
+        working-directory: exampleSite
+        run: |
+          hugo --gc 2>&1 | tee hugo.log
+          if grep -E 'ERROR|WARN' hugo.log; then
+            echo "::error::Hugo build produced ERROR/WARN lines"
+            exit 1
+          fi
+      - uses: browser-actions/setup-chrome@v1
+      - name: Run layout probe assertions
+        run: |
+          python3 -m http.server 8080 --bind 127.0.0.1 --directory exampleSite/public >/dev/null 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID"' EXIT
+          for i in $(seq 1 20); do
+            if curl -fsS -o /dev/null http://127.0.0.1:8080/; then break; fi
+            if [ "$i" = "20" ]; then echo "::error::static server did not start"; exit 1; fi
+            sleep 0.5
+          done
+          scripts/check-layout.sh http://127.0.0.1:8080

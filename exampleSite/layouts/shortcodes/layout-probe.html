@@ -12,13 +12,17 @@
     var main = document.getElementById('content');
     if (!main) return;
     var vw = window.innerWidth;
+    var cvw = document.documentElement.clientWidth; // excludes classic scrollbars
     var mw = main.getBoundingClientRect().width;
     var left = vw >= 768 && shown('aside.hextra-sidebar-container');
     var right = vw >= 1280 && shown('nav.hextra-toc');
+    var prose = document.querySelector('#content .content p');
     document.getElementById('ww-probe').textContent =
       'viewport ' + vw + 'px  |  main ' + Math.round(mw) + 'px (' + Math.round((mw / vw) * 100) + '% of window)' +
       '  |  left sidebar: ' + (left ? 'shown' : 'collapsed → space given to main') +
-      '  |  right sidebar: ' + (right ? 'shown' : 'collapsed → space given to main');
+      '  |  right sidebar: ' + (right ? 'shown' : 'collapsed → space given to main') +
+      (prose ? '  |  prose ' + Math.round(prose.getBoundingClientRect().width) + 'px' : '') +
+      '  |  cvw ' + cvw + 'px';
   }
   window.addEventListener('resize', update);
   update();

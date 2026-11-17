@@ -14,6 +14,10 @@ defaultContentLanguage = "en"
 [params]
   description = "Visual test pages for the WideWeb Hugo theme"
 
+[params.toc]
+  # /tests/toc-tags/ covers the tag-footer contract; no other page has tags.
+  displayTags = true
+
 [menu]
   [[menu.main]]
     name = "Layout Tests"

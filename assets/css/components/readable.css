@@ -1,0 +1,16 @@
+/* WideWeb: opt-in reading measure.
+
+   Pages with `readable: true` (or sites with `params.readable.enable = true`)
+   cap prose line length at a readable measure while the page itself keeps
+   spanning 100% of the window: top-level tables, code blocks, figures and
+   shortcodes stay full-bleed, only paragraphs, lists and quotes are capped.
+   See layouts/_partials/utils/page-readable.html for the opt-in rules. */
+
+.hextra-readable .content :is(p, ul, ol, dl, blockquote, address, figure > figcaption) {
+  max-width: 75ch;
+}
+
+.hextra-readable .content :is(h2, h3, h4, h5, h6) {
+  max-width: 55ch;
+  text-wrap: balance;
+}

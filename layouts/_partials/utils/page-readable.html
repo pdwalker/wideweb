@@ -1,0 +1,19 @@
+{{- /*
+  Returns whether the page opts into the reading measure (the `hextra-readable`
+  class, which caps prose line length without capping page width).
+
+  Resolution order:
+    1. front matter `readable: true|false` — explicit per-page choice
+    2. site config `params.readable.enable` — site-wide default
+    3. off
+
+  @param {Page} .
+
+  @returns {bool}
+*/ -}}
+
+{{- $value := .Params.readable -}}
+{{- if eq $value nil -}}
+  {{- $value = (default (dict) site.Params.readable).enable -}}
+{{- end -}}
+{{- return $value | default false -}}

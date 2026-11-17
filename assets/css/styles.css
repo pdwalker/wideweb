@@ -100,6 +100,7 @@ body {
 @import "./components/jupyter.css";
 @import "./components/badge.css";
 @import "./components/toc.css";
+@import "./components/readable.css";
 @import "./components/archives.css";
 @import "./components/gallery.css";
 @import "./components/openapi.css";

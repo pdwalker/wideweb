@@ -43,6 +43,14 @@ leave an empty 16rem column, and `displayPlaceholder` used to reserve a spacer �
 removed. No site or page parameter caps page or content width anymore; the
 `width` front matter and `params.page.width` are ignored.
 
+## Readable mode (opt-in)
+
+Full-viewport prose can run to 200+ characters per line on an ultrawide monitor.
+`readable: true` in front matter (or `params.readable.enable = true` site-wide)
+caps paragraphs, lists and quotes at a 75-character measure while the page
+itself still spans 100% of the window — tables, code blocks and figures keep
+the full width. See `/tests/readable/` on the test site.
+
 ## Development & testing
 
 The repo root is the theme; `exampleSite/` is the visual test site.
@@ -62,6 +70,12 @@ classes to layouts:
 ```sh
 npm install
 npm run build:css   # writes assets/css/compiled/main.css (vendored, commit it)
+```
+
+Machine-readable layout assertions (headless Chrome, 1440×900):
+
+```sh
+scripts/check-layout.sh   # against hugo server; see AGENTS.md for CI details
 ```
 
 ## License

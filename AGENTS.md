@@ -55,14 +55,35 @@ Use `--screenshot=path.png` for visual artifacts a human can review
 | `/tests/left-only/` | shown | collapsed | 1184px |
 | `/tests/right-only/` | collapsed | shown | 1184px |
 | `/tests/auto-collapse/` | shown | auto-collapsed (page has no h2+) | 1184px |
+| `/tests/wide/` | collapsed (wide layout default) | shown | 1184px |
+| `/tests/wide-no-toc/` | collapsed | collapsed (auto) | **1440px (100%)** |
+| `/tests/readable/` | shown | shown | 928px; first prose block capped ~75ch |
+| `/tests/toc-tags/` | shown | shown — tag footer keeps TOC alive | 928px |
+| `/blog/` | collapsed | collapsed | **1440px (100%)** |
 | `/blog/hello/` | collapsed (layout default) | shown | 1184px |
 | `/blog/with-nav/` | shown (`sidebar.show: true`) | shown | 928px |
 | `/about/` | collapsed | shown | 1184px |
+| `/tags/wideweb/` | collapsed | collapsed | **100%** (markup contract) |
 | `/` (home) | collapsed | collapsed | ~100% |
 
-928 vs 913 for the same columns is expected: docs-article right-padding trick
-(`hx:pr-[calc(env(safe-area-inset-right)-1.5rem)]`) vs blog/plain layout's
-`max()` padding. The 16rem columns = 256px each.
+The 928-vs-913 delta is **not** a padding trick: it is the 15px classic macOS
+scrollbar. Scrolling pages have `documentElement.clientWidth` = window − 15px
+while `window.innerWidth` still reads 1440. That is why the live probe also
+emits `cvw NNNNpx` and why `scripts/check-layout.sh` asserts the
+scrollbar-independent identity
+`main == cvw − 256px × visible-sidebars` instead of frozen pixel values.
+
+### Automated layout checks
+
+```sh
+scripts/check-layout.sh [BASE_URL]   # default http://localhost:1313
+```
+
+Headless-Chrome assertions of the contract above (1440×900 window): sidebar
+visibility per route, the `main == cvw − sidebars` identity, the reading-measure
+prose bounds, and the taxonomy pages' markup contract. CI
+(`.github/workflows/ci.yml`) runs this plus `hugo --gc` (0 ERROR/WARN) and a
+compiled-CSS drift check on every push/PR.
 
 ## The sidebar contract (implemented, do not regress)
 
@@ -83,7 +104,14 @@ empty-16rem-column bug — keep it.
 Width — `assets/css/variables.css` is the single source: `--hextra-max-page-width:
 100%`, `--hextra-max-content-width: none`, navbar/footer 100%. The `width` front
 matter and `params.page.width`/`navbar.width`/`footer.width` are ignored by design
-(`_partials/utils/page-width-override.html` is deleted — never re-add it).
+(`_partials/utils/page-width-override.html` is deleted — never re-add it). The
+**reading measure** is the one opt-in exception to uncapped prose: front matter
+`readable: true` or site `params.readable.enable = true` adds `hextra-readable`
+to `<main>` (resolved by `_partials/utils/page-readable.html`), which caps
+paragraph/list line length at 75ch via `assets/css/components/readable.css`
+while the page still spans 100% and tables/code/figures stay full-bleed.
+`layout: wide` follows the same contract (100% page, TOC included, sidebar off
+by default but `sidebar.show` still opts in).
 
 Breakpoints: right TOC is Tailwind `xl` (≥1280px); sidebar→overlay is CSS media
 `max-width: 48rem` (768px); `menu.js` guards null menu/sidebar containers.
@@ -112,6 +140,10 @@ Breakpoints: right TOC is Tailwind `xl` (≥1280px); sidebar→overlay is CSS me
    nothing. Use headless Chrome directly instead.
 8. `hugo server` started from the theme root serves an empty "theme site" —
    always run it from `exampleSite/`.
+9. **Classic macOS scrollbars shift raw pixel expectations by 15px** on
+   scrolling pages (`innerWidth` 1440 vs `clientWidth` 1425). Assert against
+   `clientWidth` (the probe's `cvw` token), not window width —
+   `scripts/check-layout.sh` does exactly this.
 
 ## Syncing with upstream Hextra
 
@@ -129,11 +161,14 @@ CSS/template change: rebuild CSS, run both builds, re-run the probe table above.
 - Templates: hextra style — `{%- -}}` whitespace control, `{{- define "name" -}}`
   partial templates, dict-passing partials; keep it.
 - Test matrix changes: if you add/remove test pages, update this file's
-  expectation table, README's matrix, and `exampleSite/content/_index.md`.
+  expectation table, README's matrix, and `exampleSite/content/_index.md`, and
+  add the route to `scripts/check-layout.sh`.
 - Commit compiled CSS with its source change; `.gitattributes` marks it
   linguist-generated.
-- There is no CI yet. If adding Pages deploy, build `exampleSite/` with Hugo
-  modules and note that `baseURL` must become the Pages URL.
+- CI is `.github/workflows/ci.yml`: (1) compiled-CSS drift check, (2) `hugo
+  --gc` of `exampleSite` failing on any ERROR/WARN, (3) `scripts/check-layout.sh`
+  against a static server of the built site. Keep the expectations in
+  AGENTS.md, README and the script in sync.
 - Do not commit: `public/`, `resources/`, `node_modules/`, `hugo_stats.json`,
   `.hugo_build.lock` (see `.gitignore`).
 

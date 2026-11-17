@@ -21,8 +21,14 @@ which sidebars are currently rendered.
 | [Right sidebar only](/tests/right-only/) | `sidebar.hide: true` | **collapsed** | shown | window − 16rem |
 | [No sidebars](/tests/no-sidebars/) | `sidebar.hide` + `toc: false` | **collapsed** | **collapsed** | **100% of window** |
 | [Auto-collapse](/tests/auto-collapse/) | *(no headings on page)* | shown | **collapsed (auto)** | window − 16rem |
+| [Wide layout](/tests/wide/) | `layout: wide` | **collapsed** | shown | window − 16rem |
+| [Wide layout, no TOC](/tests/wide-no-toc/) | `layout: wide` + no headings | **collapsed** | **collapsed (auto)** | **100% of window** |
+| [Readable](/tests/readable/) | `readable: true` | shown | shown | window − 32rem, prose capped ~75ch |
+| [TOC tags footer](/tests/toc-tags/) | `tags:` + no headings | shown | shown (**tag footer keeps it alive**) | window − 32rem |
 | [About](/about/) | non-docs single page | **collapsed** | shown | window − 16rem |
+| [Blog index](/blog/) | list layout | **collapsed** | **collapsed** | **100% of window** |
 | [Blog post](/blog/hello/) | blog layout | **collapsed** | shown | window − 16rem |
+| [Tag page](/tags/wideweb/) | taxonomy layout | **collapsed** | **collapsed** | **100% of window** |
 
 {{< layout-probe >}}
 

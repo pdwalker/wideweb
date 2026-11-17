@@ -18,6 +18,3 @@ comes back, which is how you can prove the auto-collapse rule to yourself.
 
 {{< layout-probe >}}
 
-## Title
-
-asdfa sdfasd sd sdf sdf
